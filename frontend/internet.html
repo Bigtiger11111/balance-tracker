@@ -3,65 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Internet Transactions</title>
+    <title>Internet History - My Balance Tracker</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Internet Transaction History</h2>
+    <div class="header">
+        <div>
+            <h2>Internet History</h2>
+            <h3>My Balance Tracker</h3>
+        </div>
         
-        <table border="1" style="width:100%; text-align:left; margin-top:20px;">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Account</th>
-                    <th>Name</th>
-                    <th>Amount</th>
-                    <th>Type</th>
-                </tr>
-            </thead>
-            <tbody id="internet-table-body">
-                <!-- Internet Transactions यहाँ आउनेछन् -->
-            </tbody>
-        </table>
-
-        <br>
-        <a href="index.html">Back to Dashboard</a>
+        <!-- Dropdown Menu -->
+        <div class="dropdown">
+            <button class="menu-btn">Menu ▼</button>
+            <div class="dropdown-content">
+                <a href="index.html">Dashboard</a>
+                <a href="transaction.html">Transaction</a>
+                <a href="history.html">History</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
     </div>
 
+    <div class="main-layout" style="display: block;">
+        <div class="card" style="width: 100%; overflow-x: auto;">
+            <table class="history-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #334155; text-align: left;">
+                        <th style="padding: 12px;">ACCOUNT</th>
+                        <th style="padding: 12px;">DATE</th>
+                        <th style="padding: 12px;">NAME</th>
+                        <th style="padding: 12px;">REASON</th>
+                        <th style="padding: 12px;">TYPE</th>
+                        <th style="padding: 12px;">AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody id="internetHistoryBody">
+                    <!-- Transactions यहाँ आउनेछन् -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
     <script>
-        // Render API URL
-        const API_URL = "https://my-balance-tracker.onrender.com/api/transactions";
+        // Page Load हुँदा Data तान्ने
+        async function loadInternetHistory() {
+            checkAuth(); // Protection Check
+            const transactions = await fetchTransactions();
+            const tbody = document.getElementById('internetHistoryBody');
+            if (!tbody) return;
 
-        async function fetchInternetTransactions() {
-            try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
+            tbody.innerHTML = '';
 
-                // 'Internet' Reason भएका मात्र फिल्टर गर्ने
-                const internetData = data.filter(t => 
-                    t.reason && t.reason.toLowerCase().trim() === 'internet'
-                );
+            // 'Internet' Reason भएका मात्र फिल्टर गर्ने
+            const internetData = transactions.filter(tx => 
+                tx.reason && tx.reason.toLowerCase().trim() === 'internet'
+            );
 
-                const tbody = document.getElementById('internet-table-body');
-                tbody.innerHTML = '';
-
-                internetData.forEach(t => {
-                    const row = `<tr>
-                        <td>${t.date ? t.date.split('T')[0] : '-'}</td>
-                        <td>${t.account}</td>
-                        <td>${t.name}</td>
-                        <td>Rs. ${t.amount}</td>
-                        <td style="color: ${t.type === 'credit' ? 'green' : 'red'}">${t.type.toUpperCase()}</td>
-                    </tr>`;
-                    tbody.innerHTML += row;
-                });
-            } catch (err) {
-                console.error("Error fetching data:", err);
+            if (internetData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: #94a3b8;">No internet transactions found</td></tr>`;
+                return;
             }
+
+            internetData.forEach(tx => {
+                const tr = document.createElement('tr');
+                const amt = Number(tx.amount) || 0;
+                const isCredit = tx.type && tx.type.toLowerCase() === 'credit';
+                
+                tr.style.borderBottom = "1px solid #1e293b";
+                tr.innerHTML = `
+                    <td style="padding: 12px;">${tx.account}</td>
+                    <td style="padding: 12px;">${tx.date ? tx.date.split('T')[0] : '-'}</td>
+                    <td style="padding: 12px;">${tx.name || '-'}</td>
+                    <td style="padding: 12px;">${tx.reason || '-'}</td>
+                    <td style="padding: 12px;">${tx.type}</td>
+                    <td style="padding: 12px; color: ${isCredit ? '#10b981' : '#ef4444'}; font-weight: bold;">
+                        Rs. ${amt.toLocaleString('en-IN')}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        fetchInternetTransactions();
+        loadInternetHistory();
     </script>
 </body>
 </html>
