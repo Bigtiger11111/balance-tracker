@@ -57,7 +57,7 @@ async function fetchTransactions() {
     }
 }
 
-// 5. Balance हरू हिसाब गर्ने (FIXED LOGIC)
+// 5. Balance हरू हिसाब गर्ने
 function calculateBalances(transactions) {
     let totals = { "Esewa": 3.09, "Nic Asia": 0.52, "CTZ": 171.81, "Cash": 13230.00 };
     let internetTotal = 0;
@@ -68,12 +68,12 @@ function calculateBalances(transactions) {
         const amount = Number(tx.amount) || 0;
         const val = isCredit ? amount : -amount;
 
-        // १. Payment Source Account (Esewa, Nic Asia, CTZ, Cash) ma dynamic (+) wa (-) garne
+        // १. Payment Source Account (Esewa, Nic Asia, CTZ, Cash)
         if (totals[tx.account] !== undefined) {
             totals[tx.account] += val;
         }
 
-        // २. Yadi Reason 'Internet' ho bhane Internet Balance ma pani (+) wa (-) garne
+        // २. Yadi Reason 'Internet' ho bhane Internet Balance
         if (isInternet) {
             internetTotal += val;
         }
@@ -204,22 +204,7 @@ if (txForm) {
     });
 }
 
-// 🎯 Advance Modern Date Picker (Khatarnak Calendar UI)
-document.addEventListener("DOMContentLoaded", function () {
-    const dateInput = document.getElementById('date');
-    if (dateInput) {
-        flatpickr("#date", {
-            dateFormat: "Y-m-d",
-            defaultDate: "today",
-            animate: true,
-            disableMobile: "true", // Phone ma pani standard browser calendar ko satta yo modern calendar aauchha
-            monthSelectorType: "dropdown",
-            prevArrow: "◄",
-            nextArrow: "►"
-        });
-    }
-});
-// 8. History Page Load गर्ने (History Page)
+// 8. History Page Load गर्ने
 async function loadHistory() {
     checkAuth();
     const transactions = await fetchTransactions();
@@ -243,3 +228,19 @@ async function loadHistory() {
         tbody.appendChild(tr);
     });
 }
+
+// 🎯 Advance Flatpickr Calendar Initialization (Single Clean Setup)
+document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById('date');
+    if (dateInput && typeof flatpickr !== 'undefined') {
+        flatpickr("#date", {
+            dateFormat: "Y-m-d",
+            defaultDate: "today",
+            animate: true,
+            disableMobile: true,
+            monthSelectorType: "dropdown",
+            prevArrow: "◄",
+            nextArrow: "►"
+        });
+    }
+});
