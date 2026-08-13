@@ -577,3 +577,29 @@ body {
         min-width: 160px;
     }
 }
+/* 🔮 Custom Advance DatePicker Glow Styling */
+.flatpickr-calendar {
+    background: rgba(13, 17, 29, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--accent) !important;
+    box-shadow: 0 15px 35px var(--accent-glow) !important;
+    border-radius: 16px !important;
+    color: var(--text-main) !important;
+}
+
+.flatpickr-day.selected {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 15px var(--accent-glow) !important;
+}
+
+.flatpickr-day:hover {
+    background: rgba(99, 102, 241, 0.25) !important;
+}
+
+.flatpickr-months .flatpickr-month, 
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    color: var(--text-main) !important;
+    fill: var(--text-main) !important;
+}

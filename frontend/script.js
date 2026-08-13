@@ -170,7 +170,7 @@ async function loadDashboard() {
     }
 }
 
-// 7. Transaction Submit गर्ने Logic (Transaction Page)
+// 7. Transaction Submit गर्ने Logic (Popup nadekhai direct save hune)
 const txForm = document.getElementById('txForm');
 if (txForm) {
     txForm.addEventListener('submit', async (e) => {
@@ -193,18 +193,32 @@ if (txForm) {
             });
 
             if (res.ok) {
-                alert("Transaction Successful!");
+                // 🚀 Direct Alert/Popup nadekhai Dashboard ma pathaune
                 window.location.href = 'index.html';
             } else {
-                alert("Failed to submit transaction");
+                console.error("Failed to submit transaction");
             }
         } catch (err) {
             console.error("Submit Error:", err);
-            alert("Server error! Backend चलिरहेको छ कि छैन चेक गर्नुहोस्।");
         }
     });
 }
 
+// 🎯 Advance Modern Date Picker (Khatarnak Calendar UI)
+document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+        flatpickr("#date", {
+            dateFormat: "Y-m-d",
+            defaultDate: "today",
+            animate: true,
+            disableMobile: "true", // Phone ma pani standard browser calendar ko satta yo modern calendar aauchha
+            monthSelectorType: "dropdown",
+            prevArrow: "◄",
+            nextArrow: "►"
+        });
+    }
+});
 // 8. History Page Load गर्ने (History Page)
 async function loadHistory() {
     checkAuth();
