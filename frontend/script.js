@@ -57,7 +57,7 @@ async function fetchTransactions() {
     }
 }
 
-// 5. Balance हरू हिसाब गर्ने (Internet र मुख्य Accounts को हिसाब छुट्ट्याइएको)
+// 5. Balance हरू हिसाब गर्ने (FIXED LOGIC)
 function calculateBalances(transactions) {
     let totals = { "Esewa": 3.09, "Nic Asia": 0.52, "CTZ": 171.81, "Cash": 13230.00 };
     let internetTotal = 0;
@@ -68,21 +68,21 @@ function calculateBalances(transactions) {
         const amount = Number(tx.amount) || 0;
         const val = isCredit ? amount : -amount;
 
+        // १. Payment Source Account (Esewa, Nic Asia, CTZ, Cash) ma dynamic (+) wa (-) garne
+        if (totals[tx.account] !== undefined) {
+            totals[tx.account] += val;
+        }
+
+        // २. Yadi Reason 'Internet' ho bhane Internet Balance ma pani (+) wa (-) garne
         if (isInternet) {
-            // १. Reason 'Internet' छ भने Internet Balance मा मात्र हिसाब गर्ने
             internetTotal += val;
-        } else {
-            // २. अन्य Reason भए मात्र मुख्य Accounts (Esewa, Cash, etc.) मा हिसाब गर्ने
-            if (totals[tx.account] !== undefined) {
-                totals[tx.account] += val;
-            }
         }
     });
 
     return { totals, internetTotal };
 }
 
-// 🎯 Dynamic Number Counter Animation (0 देखि Target Value सम्म बढाउने)
+// 🎯 Dynamic Number Counter Animation
 function animateCounter(elementId, targetValue, duration = 1200) {
     const el = document.getElementById(elementId);
     if (!el) return;
@@ -94,7 +94,6 @@ function animateCounter(elementId, targetValue, duration = 1200) {
         if (!startTime) startTime = timestamp;
         const progress = Math.min((timestamp - startTime) / duration, 1);
         
-        // EaseOutQuad Formula for smooth slowdown
         const easeProgress = 1 - (1 - progress) * (1 - progress);
         const currentValue = Math.floor(easeProgress * (targetValue - startValue) + startValue);
 
@@ -127,7 +126,7 @@ async function loadDashboard() {
     animateCounter('internet-balance', internetTotal);
 
     const grandTotal = Object.values(totals).reduce((a, b) => a + b, 0);
-    animateCounter('total-bal', grandTotal, 1500); // Grand total counter
+    animateCounter('total-bal', grandTotal, 1500);
 
     // 🎨 Animated 3D Pie Chart Render Logic
     if (document.getElementById('balanceChart')) {
