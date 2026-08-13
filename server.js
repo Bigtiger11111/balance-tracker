@@ -25,11 +25,11 @@ const writeData = (data) => {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 };
 
-// 🔑 LOGIN API
+// 🔑 LOGIN API (तपाईंको नयाँ ID र Password)
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
 
-    if (username === 'admin' && password === '1234') {
+    if (username === 'bigtiger' && password === '5936') {
         res.json({ success: true, message: "Login Successful!" });
     } else {
         res.status(401).json({ success: false, message: "Wrong User ID / Password!" });
