@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Transactions</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Internet Transaction History</h2>
+        
+        <table border="1" style="width:100%; text-align:left; margin-top:20px;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Account</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody id="internet-table-body">
+                <!-- Internet Transactions यहाँ आउनेछन् -->
+            </tbody>
+        </table>
+
+        <br>
+        <a href="index.html">Back to Dashboard</a>
+    </div>
+
+    <script>
+        // Render API URL
+        const API_URL = "https://my-balance-tracker.onrender.com/api/transactions";
+
+        async function fetchInternetTransactions() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+
+                // 'Internet' Reason भएका मात्र फिल्टर गर्ने
+                const internetData = data.filter(t => 
+                    t.reason && t.reason.toLowerCase().trim() === 'internet'
+                );
+
+                const tbody = document.getElementById('internet-table-body');
+                tbody.innerHTML = '';
+
+                internetData.forEach(t => {
+                    const row = `<tr>
+                        <td>${t.date ? t.date.split('T')[0] : '-'}</td>
+                        <td>${t.account}</td>
+                        <td>${t.name}</td>
+                        <td>Rs. ${t.amount}</td>
+                        <td style="color: ${t.type === 'credit' ? 'green' : 'red'}">${t.type.toUpperCase()}</td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            } catch (err) {
+                console.error("Error fetching data:", err);
+            }
+        }
+
+        fetchInternetTransactions();
+    </script>
+</body>
+</html>
