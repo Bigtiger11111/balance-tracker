@@ -36,6 +36,8 @@ body {
     animation: bgPulse 14s ease infinite alternate;
     color: var(--text-main);
     min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 @keyframes bgPulse {
@@ -179,7 +181,7 @@ body {
     flex-wrap: wrap;
 }
 
-.chart-container, .bal-table, .form-card, .history-table-container, .filter-card {
+.chart-container, .bal-table, .form-card, .history-table-container, .filter-card, .card {
     background: var(--card-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -204,8 +206,8 @@ body {
 
 .balance-container {
     display: flex;
-    gap: 24px;
-    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
     flex: 1;
 }
 
@@ -213,7 +215,7 @@ body {
 .bal-table {
     border-collapse: separate;
     border-spacing: 0;
-    width: 280px;
+    width: 100%;
     overflow: hidden;
 }
 
@@ -242,15 +244,20 @@ body {
     text-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
 }
 
+/* Card Styling (For Internet Balance Card) */
+.card {
+    padding: 20px;
+}
+
 /* Shiny Glow Total Amount Box */
 .total-box {
     background: linear-gradient(135deg, #6366f1 0%, #4338ca 50%, #312e81 100%);
     background-size: 200% 200%;
     animation: gradientShift 6s ease infinite;
-    padding: 32px;
+    padding: 28px;
     border-radius: var(--radius);
     text-align: center;
-    min-width: 220px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -420,13 +427,8 @@ body {
     box-shadow: 0 12px 30px rgba(99, 102, 241, 0.6);
 }
 
-.submit-btn:active {
-    transform: scale(0.98);
-}
-
-/* Action Icons inside Table (Edit/Delete) */
 .btn-action {
-    background: none;
+    background: transparent;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
@@ -506,19 +508,70 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Responsive Layout */
-@media (max-width: 768px) {
+/* 📱 Complete Mobile Responsive Styling */
+@media screen and (max-width: 768px) {
     body {
         padding: 16px;
     }
-    .main-layout, .balance-container, .filter-bar {
+
+    .header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+    }
+
+    .header h2 {
+        font-size: 1.1rem;
+    }
+    
+    .header h3 {
+        font-size: 0.8rem;
+    }
+
+    .menu-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .main-layout, 
+    .balance-container, 
+    .filter-bar {
         flex-direction: column;
         align-items: stretch;
+        gap: 16px;
     }
-    .chart-container, .bal-table, .total-box, .form-card {
-        width: 100%;
+
+    .chart-container, 
+    .bal-table, 
+    .total-box, 
+    .form-card,
+    .balance-container {
+        width: 100% !important;
         max-width: 100%;
     }
+
+    .chart-container {
+        height: 240px;
+    }
+
+    .filter-inputs {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .filter-inputs input, 
+    .filter-inputs select, 
+    .export-btns {
+        width: 100%;
+    }
+
+    input, select, button {
+        width: 100%;
+        font-size: 16px; /* Automatic Mobile Safari Zoom-in roknas */
+    }
+
     .dropdown-content {
         right: 0;
         min-width: 160px;
