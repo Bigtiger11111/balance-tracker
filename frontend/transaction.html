@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Transaction - My Balance Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h2>New Transaction</h2>
+            <h3>My Balance Tracker</h3>
+        </div>
+        
+        <div class="dropdown">
+            <button class="menu-btn">Menu ▼</button>
+            <div class="dropdown-content">
+                <a href="index.html">Dashboard</a>
+                <a href="history.html">History</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+        <div class="form-card">
+            <h3 style="margin-bottom: 20px; text-align: center;">Add New Transaction</h3>
+            <form id="txForm">
+                <div class="form-row">
+                    <label for="type">Type</label>
+                    <select id="type" required>
+                        <option value="Credit">Credit (आम्दानी)</option>
+                        <option value="Debit">Debit (खर्च)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="account">Account</label>
+                    <select id="account" required>
+                        <option value="Esewa">Esewa</option>
+                        <option value="Nic Asia">Nic Asia</option>
+                        <option value="CTZ">CTZ</option>
+                        <option value="Cash">Cash</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" placeholder="नाम लेख्नुहोस् ">
+                </div>
+
+                <div class="form-row">
+                    <label for="reason">Reason</label>
+                    <input type="text" id="reason" placeholder="कारण लेख्नुहोस् ">
+                </div>
+
+                <div class="form-row">
+                    <label for="amount">Amount (Rs.)</label>
+                    <input type="number" id="amount" placeholder="रकम हाल्नुहोस्" min="1" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Save Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        checkAuth();
+        // Today's Date Auto Select
+        document.getElementById('date').valueAsDate = new Date();
+    </script>
+</body>
+</html>
