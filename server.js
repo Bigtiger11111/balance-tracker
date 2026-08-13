@@ -25,6 +25,11 @@ const writeData = (data) => {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 };
 
+// Root URL Message
+app.get('/', (req, res) => {
+    res.send("Backend Server is Running Successfully!");
+});
+
 // 🔑 LOGIN API (तपाईंको नयाँ ID र Password)
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
