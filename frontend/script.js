@@ -1,5 +1,5 @@
-// Render मा Live रहेको Backend URL
-const BASE_URL = "https://my-balance-tracker.onrender.com";
+// Render ma Live raheko Backend URL (Naya Live Link Updated)
+const BASE_URL = "https://balance-tracker-8kxx.onrender.com";
 const API_URL = `${BASE_URL}/api/transactions`;
 
 // 1. Page Protection Check
@@ -15,7 +15,7 @@ function logout() {
     window.location.href = 'login.html';
 }
 
-// 3. Login Process Handle गर्ने
+// 3. Login Process Handle Garne
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -46,7 +46,7 @@ if (loginForm) {
     });
 }
 
-// 4. API बाट Transactions ल्याउने
+// 4. API Bata Transactions Lyaune
 async function fetchTransactions() {
     try {
         const res = await fetch(API_URL);
@@ -57,7 +57,7 @@ async function fetchTransactions() {
     }
 }
 
-// 5. Balance हरू हिसाब गर्ने
+// 5. Balance Haru Hisab Garne
 function calculateBalances(transactions) {
     let totals = { "Esewa": 3.09, "Nic Asia": 0.52, "CTZ": 171.81, "Cash": 13230.00 };
     let internetTotal = 0;
@@ -109,7 +109,7 @@ function animateCounter(elementId, targetValue, duration = 1200) {
     window.requestAnimationFrame(step);
 }
 
-// 6. Dashboard Load गर्ने (Smooth Animations)
+// 6. Dashboard Load Garne (Smooth Animations)
 async function loadDashboard() {
     checkAuth(); // Protection Check
 
@@ -170,7 +170,7 @@ async function loadDashboard() {
     }
 }
 
-// 7. Transaction Submit गर्ने Logic (Popup nadekhai direct save hune)
+// 7. Transaction Submit Garne Logic (Direct Save)
 const txForm = document.getElementById('txForm');
 if (txForm) {
     txForm.addEventListener('submit', async (e) => {
@@ -193,7 +193,6 @@ if (txForm) {
             });
 
             if (res.ok) {
-                // 🚀 Direct Alert/Popup nadekhai Dashboard ma pathaune
                 window.location.href = 'index.html';
             } else {
                 console.error("Failed to submit transaction");
@@ -204,7 +203,7 @@ if (txForm) {
     });
 }
 
-// 8. History Page Load गर्ने
+// 8. History Page Load Garne
 async function loadHistory() {
     checkAuth();
     const transactions = await fetchTransactions();
@@ -229,7 +228,7 @@ async function loadHistory() {
     });
 }
 
-// 🎯 Advance Flatpickr Calendar Initialization (Single Clean Setup)
+// 🎯 Advance Flatpickr Calendar Initialization
 document.addEventListener("DOMContentLoaded", function () {
     const dateInput = document.getElementById('date');
     if (dateInput && typeof flatpickr !== 'undefined') {
