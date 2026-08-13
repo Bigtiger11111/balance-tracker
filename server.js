@@ -25,6 +25,17 @@ const writeData = (data) => {
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 };
 
+// 🔑 LOGIN API
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (username === 'admin' && password === '1234') {
+        res.json({ success: true, message: "Login Successful!" });
+    } else {
+        res.status(401).json({ success: false, message: "Wrong User ID / Password!" });
+    }
+});
+
 // GET API - Fetch Transactions
 app.get('/api/transactions', (req, res) => {
     try {
