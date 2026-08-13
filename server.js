@@ -1,80 +1,94 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
 
 const app = express();
-app.use(express.json());
+
+// Middlewares
 app.use(cors());
+app.use(express.json());
 
-const DATA_FILE = path.join(__dirname, 'data.json');
+// 1. 🟢 MongoDB Atlas Connection (Tapaiko Connection String Added)
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://bigtiger2055_db_user:loe0YBKPbMCfI1MP@bigtiger11111.gnegteg.mongodb.net/balance_tracker?retryWrites=true&w=majority&appName=bigtiger11111";
 
-// data.json फाइल छैन भने नयाँ खाली फाइल बनाउने
-if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify([]));
-}
+mongoose.connect(MONGO_URI)
+    .then(() => console.log("✅ MongoDB Atlas Connected Successfully!"))
+    .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// JSON फाइलबाट Data पढ्ने Helper Function
-const readData = () => {
-    const data = fs.readFileSync(DATA_FILE, 'utf8');
-    return JSON.parse(data || '[]');
-};
+// 2. Transaction Database Schema (Model)
+const transactionSchema = new mongoose.Schema({
+    type: { type: String, required: true },
+    account: { type: String, required: true },
+    date: { type: String, required: true },
+    name: { type: String, default: '-' },
+    reason: { type: String, default: '-' },
+    amount: { type: Number, required: true }
+}, { timestamps: true });
 
-// JSON फाइलमा Data लेख्ने Helper Function
-const writeData = (data) => {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-};
+const Transaction = mongoose.model('Transaction', transactionSchema);
 
-// Root URL Message
+// Root URL Check
 app.get('/', (req, res) => {
-    res.send("Backend Server is Running Successfully!");
+    res.send("Backend Server is Running Successfully with MongoDB Atlas!");
 });
 
-// 🔑 LOGIN API (तपाईंको नयाँ ID र Password)
+// 3. 🔑 LOGIN API (Username: bigtiger / Password: 5936)
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
 
     if (username === 'bigtiger' && password === '5936') {
-        res.json({ success: true, message: "Login Successful!" });
+        return res.json({ success: true, message: "Login Successful!" });
     } else {
-        res.status(401).json({ success: false, message: "Wrong User ID / Password!" });
+        return res.status(401).json({ success: false, message: "Wrong User ID / Password!" });
     }
 });
 
-// GET API - Fetch Transactions
-app.get('/api/transactions', (req, res) => {
+// 4. GET API - Fetch All Transactions
+app.get('/api/transactions', async (req, res) => {
     try {
-        const transactions = readData();
+        const transactions = await Transaction.find().sort({ createdAt: -1 });
         res.json(transactions);
     } catch (err) {
-        res.status(500).json({ error: "Failed to read data" });
+        console.error("Fetch Error:", err);
+        res.status(500).json({ error: "Failed to fetch transactions" });
     }
 });
 
-// POST API - Add New Transaction
-app.post('/api/transactions', (req, res) => {
+// 5. POST API - Add New Transaction
+app.post('/api/transactions', async (req, res) => {
     try {
-        const transactions = readData();
-        const newTx = { id: Date.now(), ...req.body };
-        transactions.unshift(newTx);
-        writeData(transactions);
+        const { type, account, date, name, reason, amount } = req.body;
+
+        const newTx = new Transaction({
+            type,
+            account,
+            date,
+            name,
+            reason,
+            amount: Number(amount)
+        });
+
+        await newTx.save();
         res.status(201).json(newTx);
     } catch (err) {
-        res.status(500).json({ error: "Failed to save data" });
+        console.error("Save Error:", err);
+        res.status(500).json({ error: "Failed to save transaction" });
     }
 });
 
-// DELETE API - Delete Transaction
-app.delete('/api/transactions/:id', (req, res) => {
+// 6. DELETE API - Delete Transaction by ID
+app.delete('/api/transactions/:id', async (req, res) => {
     try {
-        let transactions = readData();
-        transactions = transactions.filter(tx => tx.id != req.params.id);
-        writeData(transactions);
-        res.json({ message: "Transaction Deleted" });
+        await Transaction.findByIdAndDelete(req.params.id);
+        res.json({ message: "Transaction Deleted Successfully" });
     } catch (err) {
-        res.status(500).json({ error: "Failed to delete data" });
+        console.error("Delete Error:", err);
+        res.status(500).json({ error: "Failed to delete transaction" });
     }
 });
 
+// Server Listen
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
