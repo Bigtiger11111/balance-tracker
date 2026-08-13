@@ -16,11 +16,13 @@
             <h3>My Balance Tracker</h3>
         </div>
         
+        <!-- Menu Dropdown (Internet थपिएको) -->
         <div class="dropdown">
             <button class="menu-btn">Menu ▼</button>
             <div class="dropdown-content">
                 <a href="transaction.html">Transaction</a>
                 <a href="history.html">History</a>
+                <a href="internet.html">Internet</a>
                 <a href="#" onclick="logout()">Logout</a>
             </div>
         </div>
@@ -41,6 +43,13 @@
                 <tr><td>Cash</td><td>: Rs. <span id="cash-bal">13230.00</span></td></tr>
             </table>
 
+            <!-- Internet Balance (Total Amount को ठिक माथि) -->
+            <div class="card" style="margin-top: 15px; margin-bottom: 10px; text-align: center;">
+                <h4 style="margin: 0; color: #888;">Internet Balance</h4>
+                <h3 id="internet-balance" style="margin: 5px 0 0 0;">Rs. 0</h3>
+            </div>
+
+            <!-- Total Amount Box -->
             <div class="total-box">
                 <div>Total Amount</div>
                 <div class="total-val">Rs. <span id="total-bal">0</span></div>

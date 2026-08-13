@@ -37,7 +37,7 @@ if (loginForm) {
                 localStorage.setItem('isLoggedIn', 'true');
                 window.location.href = 'index.html';
             } else {
-                alert(data.message || "Rong User ID / Password!");
+                alert(data.message || "Wrong User ID / Password!");
             }
         } catch (err) {
             console.error("Login Error:", err);
@@ -57,18 +57,29 @@ async function fetchTransactions() {
     }
 }
 
-// 5. Balance हरू हिसाब गर्ने
+// 5. Balance हरू हिसाब गर्ने (Internet र मुख्य Accounts को हिसाब छुट्ट्याइएको)
 function calculateBalances(transactions) {
     let totals = { "Esewa": 3.09, "Nic Asia": 0.52, "CTZ": 171.81, "Cash": 13230.00 };
+    let internetTotal = 0;
 
     transactions.forEach(tx => {
-        let val = tx.type === 'Credit' ? Number(tx.amount) : -Number(tx.amount);
-        if (totals[tx.account] !== undefined) {
-            totals[tx.account] += val;
+        const isInternet = tx.reason && tx.reason.toLowerCase().trim() === 'internet';
+        const isCredit = tx.type && tx.type.toLowerCase() === 'credit';
+        const amount = Number(tx.amount) || 0;
+        const val = isCredit ? amount : -amount;
+
+        if (isInternet) {
+            // १. Reason 'Internet' छ भने Internet Balance मा मात्र हिसाब गर्ने
+            internetTotal += val;
+        } else {
+            // २. अन्य Reason भए मात्र मुख्य Accounts (Esewa, Cash, etc.) मा हिसाब गर्ने
+            if (totals[tx.account] !== undefined) {
+                totals[tx.account] += val;
+            }
         }
     });
 
-    return totals;
+    return { totals, internetTotal };
 }
 
 // 🎯 Dynamic Number Counter Animation (0 देखि Target Value सम्म बढाउने)
@@ -104,13 +115,16 @@ async function loadDashboard() {
     checkAuth(); // Protection Check
 
     const transactions = await fetchTransactions();
-    const totals = calculateBalances(transactions);
+    const { totals, internetTotal } = calculateBalances(transactions);
 
     // Dynamic Counter Animations for Individual Accounts
     animateCounter('esewa-bal', totals["Esewa"]);
     animateCounter('nicasia-bal', totals["Nic Asia"]);
     animateCounter('ctz-bal', totals["CTZ"]);
     animateCounter('cash-bal', totals["Cash"]);
+
+    // Internet Balance Animation
+    animateCounter('internet-balance', internetTotal);
 
     const grandTotal = Object.values(totals).reduce((a, b) => a + b, 0);
     animateCounter('total-bal', grandTotal, 1500); // Grand total counter
@@ -136,7 +150,7 @@ async function loadDashboard() {
                     showInLegend: true,
                     animation: {
                         duration: 1600,
-                        easing: 'easeOutBounce' // Smooth bounce animation on entrance
+                        easing: 'easeOutBounce'
                     }
                 }
             },
@@ -204,13 +218,14 @@ async function loadHistory() {
     transactions.forEach(tx => {
         const tr = document.createElement('tr');
         const amt = Number(tx.amount) || 0;
+        const isCredit = tx.type && tx.type.toLowerCase() === 'credit';
         tr.innerHTML = `
             <td>${tx.account}</td>
             <td>${tx.date}</td>
             <td>${tx.name || '-'}</td>
             <td>${tx.reason || '-'}</td>
             <td>${tx.type}</td>
-            <td style="color: ${tx.type === 'Credit' ? '#10b981' : '#ef4444'}; font-weight: bold;">Rs. ${amt.toLocaleString('en-IN')}</td>
+            <td style="color: ${isCredit ? '#10b981' : '#ef4444'}; font-weight: bold;">Rs. ${amt.toLocaleString('en-IN')}</td>
         `;
         tbody.appendChild(tr);
     });
