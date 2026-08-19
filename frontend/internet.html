@@ -26,6 +26,18 @@
     </div>
 
     <div class="main-layout" style="display: block;">
+        <!-- Summary Box for Credit & Debit -->
+        <div class="summary-box" style="margin-bottom: 20px; display: flex; gap: 20px;">
+            <div style="background: #e6f4ea; padding: 12px 18px; border-radius: 6px; border: 1px solid #c3e6cb;">
+                <span style="color: #155724;">Total Credit (+): </span>
+                <strong id="total-credit" style="color: #28a745;">Rs. 0</strong>
+            </div>
+            <div style="background: #f8d7da; padding: 12px 18px; border-radius: 6px; border: 1px solid #f5c6cb;">
+                <span style="color: #721c24;">Total Debit (-): </span>
+                <strong id="total-debit" style="color: #dc3545;">Rs. 0</strong>
+            </div>
+        </div>
+
         <div class="card" style="width: 100%; overflow-x: auto;">
             <table class="history-table" style="width: 100%; border-collapse: collapse;">
                 <thead>
@@ -47,7 +59,7 @@
 
     <script src="script.js"></script>
     <script>
-        // Page Load हुँदा Data तान्ने
+        // Page Load हुँदा Data तान्ने र Calculate गर्ने
         async function loadInternetHistory() {
             checkAuth(); // Protection Check
             const transactions = await fetchTransactions();
@@ -63,14 +75,26 @@
 
             if (internetData.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: #94a3b8;">No internet transactions found</td></tr>`;
+                document.getElementById('total-credit').innerText = "Rs. 0";
+                document.getElementById('total-debit').innerText = "Rs. 0";
                 return;
             }
+
+            let totalCredit = 0;
+            let totalDebit = 0;
 
             internetData.forEach(tx => {
                 const tr = document.createElement('tr');
                 const amt = Number(tx.amount) || 0;
                 const isCredit = tx.type && tx.type.toLowerCase() === 'credit';
                 
+                // कुल रकम जोड घटाउ गर्ने
+                if (isCredit) {
+                    totalCredit += amt;
+                } else {
+                    totalDebit += amt;
+                }
+
                 tr.style.borderBottom = "1px solid #1e293b";
                 tr.innerHTML = `
                     <td style="padding: 12px;">${tx.account}</td>
@@ -84,6 +108,10 @@
                 `;
                 tbody.appendChild(tr);
             });
+
+            // गणना भएको कुल रकम बक्समा देखाउने
+            document.getElementById('total-credit').innerText = "Rs. " + totalCredit.toLocaleString('en-IN');
+            document.getElementById('total-debit').innerText = "Rs. " + totalDebit.toLocaleString('en-IN');
         }
 
         loadInternetHistory();
