@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet History - My Balance Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h2>Internet History</h2>
+            <h3>My Balance Tracker</h3>
+        </div>
+        
+        <!-- Dropdown Menu -->
+        <div class="dropdown">
+            <button class="menu-btn">Menu ▼</button>
+            <div class="dropdown-content">
+                <a href="index.html">Dashboard</a>
+                <a href="transaction.html">Transaction</a>
+                <a href="history.html">History</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-layout" style="display: block;">
+        <!-- Summary Box for Credit & Debit -->
+        <div class="summary-box" style="margin-bottom: 20px; display: flex; gap: 20px;">
+            <div style="background: #e6f4ea; padding: 12px 18px; border-radius: 6px; border: 1px solid #c3e6cb;">
+                <span style="color: #155724;">Total Credit (+): </span>
+                <strong id="total-credit" style="color: #28a745;">Rs. 0</strong>
+            </div>
+            <div style="background: #f8d7da; padding: 12px 18px; border-radius: 6px; border: 1px solid #f5c6cb;">
+                <span style="color: #721c24;">Total Debit (-): </span>
+                <strong id="total-debit" style="color: #dc3545;">Rs. 0</strong>
+            </div>
+        </div>
+
+        <div class="card" style="width: 100%; overflow-x: auto;">
+            <table class="history-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #334155; text-align: left;">
+                        <th style="padding: 12px;">ACCOUNT</th>
+                        <th style="padding: 12px;">DATE</th>
+                        <th style="padding: 12px;">NAME</th>
+                        <th style="padding: 12px;">REASON</th>
+                        <th style="padding: 12px;">TYPE</th>
+                        <th style="padding: 12px;">AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody id="internetHistoryBody">
+                    <!-- Transactions यहाँ आउनेछन् -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Page Load हुँदा Data तान्ने र Calculate गर्ने
+        async function loadInternetHistory() {
+            checkAuth(); // Protection Check
+            const transactions = await fetchTransactions();
+            const tbody = document.getElementById('internetHistoryBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            // 'Internet' Reason भएका मात्र फिल्टर गर्ने
+            const internetData = transactions.filter(tx => 
+                tx.reason && tx.reason.toLowerCase().trim() === 'internet'
+            );
+
+            if (internetData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: #94a3b8;">No internet transactions found</td></tr>`;
+                document.getElementById('total-credit').innerText = "Rs. 0";
+                document.getElementById('total-debit').innerText = "Rs. 0";
+                return;
+            }
+
+            let totalCredit = 0;
+            let totalDebit = 0;
+
+            internetData.forEach(tx => {
+                const tr = document.createElement('tr');
+                const amt = Number(tx.amount) || 0;
+                const isCredit = tx.type && tx.type.toLowerCase() === 'credit';
+                
+                // कुल रकम जोड घटाउ गर्ने
+                if (isCredit) {
+                    totalCredit += amt;
+                } else {
+                    totalDebit += amt;
+                }
+
+                tr.style.borderBottom = "1px solid #1e293b";
+                tr.innerHTML = `
+                    <td style="padding: 12px;">${tx.account}</td>
+                    <td style="padding: 12px;">${tx.date ? tx.date.split('T')[0] : '-'}</td>
+                    <td style="padding: 12px;">${tx.name || '-'}</td>
+                    <td style="padding: 12px;">${tx.reason || '-'}</td>
+                    <td style="padding: 12px;">${tx.type}</td>
+                    <td style="padding: 12px; color: ${isCredit ? '#10b981' : '#ef4444'}; font-weight: bold;">
+                        Rs. ${amt.toLocaleString('en-IN')}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // गणना भएको कुल रकम बक्समा देखाउने
+            document.getElementById('total-credit').innerText = "Rs. " + totalCredit.toLocaleString('en-IN');
+            document.getElementById('total-debit').innerText = "Rs. " + totalDebit.toLocaleString('en-IN');
+        }
+
+        loadInternetHistory();
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - My Balance Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Highcharts 3D Scripts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h2>Dashboard</h2>
+        </div>
+
+        <!-- Menu Dropdown -->
+        <div class="dropdown">
+            <button class="menu-btn">Menu ▼</button>
+            <div class="dropdown-content">
+                <a href="transaction.html">Transaction</a>
+                <a href="history.html">History</a>
+                <a href="internet.html">Internet</a>
+                <a href="home.html">Home</a>
+                <a href="saving.html">Saving</a>
+                <a href="investment.html">Investment</a>
+                <a href="bike.html">Bike</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <!-- 3D Pie Chart Container -->
+        <div class="chart-container">
+            <div id="balanceChart" style="width: 100%; height: 260px;"></div>
+        </div>
+
+        <!-- Account Balances -->
+        <div class="balance-container">
+            <table class="bal-table">
+                <tr><td>Esewa</td><td>: Rs. <span id="esewa-bal">0</span></td></tr>
+                <tr><td>Nic Asia</td><td>: Rs. <span id="nicasia-bal">0</span></td></tr>
+                <tr><td>CTZ</td><td>: Rs. <span id="ctz-bal">0</span></td></tr>
+                <tr><td>Cash</td><td>: Rs. <span id="cash-bal">0</span></td></tr>
+            </table>
+
+            <!-- Internet Balance (Total Amount को ठिक माथि) -->
+            <div class="card" style="margin-top: 15px; margin-bottom: 10px; text-align: center;">
+                <h4 style="margin: 0; color: #888;">Internet Balance</h4>
+                <h3 style="margin: 5px 0 0 0;">Rs. <span id="internet-balance">0</span></h3>
+            </div>
+
+            <!-- Total Amount Box -->
+            <div class="total-box">
+                <div>Total Amount</div>
+                <div class="total-val">Rs. <span id="total-bal">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        loadDashboard();
+    </script>
+</body>
+</html>
